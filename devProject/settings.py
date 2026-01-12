@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')  # 変更
 DEBUG = os.environ.get('DEBUG') == 'True'  # 変更
 
 # 許可するホストを指定（本番環境では必須）
-ALLOWED_HOSTS = ['*']  # 変更
+ALLOWED_HOSTS = ['testproject-dry9.onrender.com']  # 変更
 
 
 # Application definition
