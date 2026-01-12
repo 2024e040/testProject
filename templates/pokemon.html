@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ポケモン図鑑</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .pokemon-card { 
+            border: 2px solid #ccc; 
+            padding: 20px; 
+            margin-top: 20px; 
+            width: 300px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stats-list { text-align: left; list-style: none; padding-left: 0; }
+        .type-tag { display: inline-block; background-color: #f0f0f0; padding: 5px 10px; margin: 5px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>ポケモン図鑑</h1>
+
+    <form action="{% url 'pokemon_viewer' %}" method="get">
+        <label for="pokemon_name">ポケモン名 (英語):</label>
+        <input type="text" id="pokemon_name" name="pokemon_name" value="{{ pokemon_name|default:'pikachu' }}" required>
+        <button type="submit">検索</button>
+    </form>
+
+    <hr>
+
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% elif name %}
+        <div class="pokemon-card">
+            <h2>No.{{ id }} {{ name }}</h2>
+            
+            <img src="{{ image_url }}" alt="{{ name }}" style="width: 150px; height: 150px;">
+            
+            <h3>タイプ</h3>
+            {% for type in types %}
+                <span class="type-tag">{{ type }}</span>
+            {% endfor %}
+
+            <h3>ステータス</h3>
+            <ul class="stats-list">
+                {% for stat in stats %}
+                    <li><strong>{{ stat.name }}:</strong> {{ stat.value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+</body>
+</html>

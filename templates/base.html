@@ -1,0 +1,4 @@
+<form class="d-flex" method="GET" action="{% url 'timeline' %}">
+    <input class="form-control me-2" type="search" placeholder="検索" name="q" aria-label="Search" value="{{ query|default:'' }}">
+    <button class="btn btn-outline-success" type="submit">検索</button>
+</form>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>投稿一覧</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+
+    <h1>投稿タイムライン</h1>
+    <a href="/admin" class="btn btn-secondary mb-3">管理画面へ</a>
+
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-8 offset-md-2">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5> <p class="card-text">{{ post.content }}</p>
+                    <p class="text-muted small">投稿者: {{ post.author }} / {{ post.created_at }}</p>
+
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary like-btn" data-pk="{{ post.pk }}">
+                            {% if request.user in post.likes.all %}
+                                いいね解除
+                            {% else %}
+                                いいね
+                            {% endif %}
+                        </button>
+                        <span id="like-count-{{ post.pk }}">{{ post.total_likes }}</span> いいね
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p>まだ投稿がありません。</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const likeBtns = document.querySelectorAll('.like-btn');
+
+            likeBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const postId = this.dataset.pk;
+                    const url = `/post/${postId}/like/`; 
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // CSRFトークン [cite: 147]
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json(); // JSON解析 [cite: 154]
+                    })
+                    .then(data => {
+                        [cite_start]// 1. カウント数を更新 [cite: 161]
+                        const countSpan = document.getElementById(`like-count-${postId}`);
+                        countSpan.textContent = data.count;
+
+                        [cite_start]// 2. ボタンの文字を更新 [cite: 162]
+                        if (data.liked) {
+                            this.textContent = 'いいね解除';
+                            this.classList.remove('btn-outline-primary');
+                            this.classList.add('btn-primary');
+                        } else {
+                            this.textContent = 'いいね';
+                            this.classList.remove('btn-primary');
+                            this.classList.add('btn-outline-primary');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('エラーが発生しました。ログインしているか確認してください。');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
