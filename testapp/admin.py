@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import TrainingRecord
 
-admin .site.register(Post)
-
-# Register your models here.
+# 管理画面でデータをいじれるように登録
+admin.site.register(TrainingRecord)
